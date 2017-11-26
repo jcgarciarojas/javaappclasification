@@ -1,0 +1,1898 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oodiagnose>
+	
+	<fuzzy-rules-engine name="FuzzyRuleBasedEngine" class-name="edu.umd.msswe.ece591.diagnose.fuzzyrules.FuzzyRuleBasedEngine">
+		<!-- clipping or scaling method -->
+		<inference-method class="edu.umd.msswe.ece591.diagnose.fuzzyrules.ClippingMethod" name="clipping method"/>
+		<defuzzification-method class="edu.umd.msswe.ece591.diagnose.fuzzyrules.MeanOfMax" name="mean of max"/>
+	</fuzzy-rules-engine>
+	
+	<metrics>
+		<metric id="LOC" class-name="edu.umd.msswe.ece591.diagnose.metrics.LOC" > 
+			<name>Lines of Code</name>
+			<definition>The LOC is the count all lines within the class. 
+Size of a class is used to evaluate the ease of understanding of code during development and maintenance.</definition>
+			<solution></solution>
+			<indicator>Maintainability, Testability, Complexity</indicator>
+			<values>normal(750,1000), medium(750,1000,1250), high(1000,1250)</values>
+		</metric>
+		<metric id="WMC" class-name="edu.umd.msswe.ece591.diagnose.metrics.WMC" > 
+			<name>Weighted Methods Per Class</name>
+			<definition>The WMC is the count of the methods implemented within a class or the sum of the complexities of the methods. 
+The current implementation of this metric counts the number of methods implemented in the class. 
+The rationale of this metric is that classes with many methods are likely to be more application specific, limiting the possibility of reuse. 
+A large number of methods also means a greater potential impact on derived classes, since the derived classes inherit (some of) the methods of the base class.</definition>
+			<solution></solution>
+			<indicator>Maintainability, Testability, Complexity</indicator>
+			<values>normal between 0 and 20, medium between 10 and 30, and high more than 20</values>
+		</metric>
+		<metric id="RFC" class-name="edu.umd.msswe.ece591.diagnose.metrics.RFC" > 
+			<name>Response for a Class</name>
+			<definition>The RFC is the count of the set of all methods that can be invoked in response to a message to an object of the class or by some method in the class. This current implementation of this metric counts the first level of calls outside of the class. The rationale of this metric is that the larger the number of methods that can be invoked from a class through messages, the greater the complexity of the class. If a large number of methods can be invoked in response to a message, the testing and debugging of the class becomes complicated since it requires a greater level of understanding on the part of the tester. </definition>
+			<solution></solution>
+			<indicator>Maintainability, Testability, Complexity</indicator>
+			<values>normal(30,40), medium(30,40,50), high(40,50)</values>
+		</metric>
+		<metric id="LCOM2" class-name="edu.umd.msswe.ece591.diagnose.metrics.LCOM2" > 
+			<name>Lack of Cohesion</name>
+			<definition>LCOM measures the dissimilarity of methods in a class by instance variable or attributes. 
+The current implementation calculates the percentage of methods that do not access a specific attribute averaged over all attributes in the class. High cohesion implies simplicity, high reusability and good class subdivision.
+The rationale of this metric is that low cohesion increases complexity, thereby increasing the likelihood of errors during the development process.</definition>
+			<solution></solution>
+			<indicator>Cohesion</indicator>
+			<values>normal(70,80), medium(70,80,90), high(80,90,100)</values>
+		</metric>
+	 	<metric id="CBO" class-name="edu.umd.msswe.ece591.diagnose.metrics.CBO" > 
+			<name>Coupling Between Object Classes</name>
+			<definition>CBO is a count of the number of other classes to which a class is coupled. 
+It is measured by counting the number of distinct non-inheritance related class hierarchies on which a class depends.
+Excessive coupling is detrimental to modular design and prevents reuse. Therefore the larger the number of couples, the higher the sensitivity to changes in other parts of the design and therefore maintenance is more difficult. Strong coupling complicates a system since a class is harder to understand, change or correct by itself if it is interrelated with other classes.</definition>
+			<solution></solution>
+			<indicator>Coupling, Encapsulation</indicator>
+			<values>normal(5,10), medium(5,10,15), high(10,15)</values>
+		</metric>
+		<metric id="NOC" class-name="edu.umd.msswe.ece591.diagnose.metrics.NOC"> 
+			<name>Number of Children</name>
+			<definition>The NOC is the number of immediate subclasses subordinate to a class in the hierarchy. 
+NOC and DIT are closely related because NOC measures the breadth of a class hierarchy, where maximum DIT measures the depth. Depth is generally better than breadth, since it promotes reuse of methods through inheritance. 
+NOC is an indicator of the potential influence a class can have on the design and on the system. The rationale beahind this metric is that the greater the number of children, the greater the likelihood of improper abstraction of the parent and may be a case of misuse of subclassing. 
+But the greater the number of children, the greater the reuse since inheritance is a form of reuse. 
+If a class has a large number of children, it may require more testing of the methods of that class, thus increase the testing time.</definition>
+			<solution></solution>
+			<indicator>Inheritance</indicator>
+			<values>normal(10,15), medium(10,15,20), high(15,20)</values>
+		</metric>
+		<metric id="DIT" class-name="edu.umd.msswe.ece591.diagnose.metrics.DIT" > 
+			<name>Depth of Inheritance Tree</name>
+			<definition>The depth of a class within the inheritance hierarchy is the maximum number of steps from the class node to the root of the tree and is measured by the maximum inheritance path from the class to the root class. 
+The rationale behind this metric is that the deeper a class is within the hierarchy, the greater the number methods it is likely to inherit making it more complex to predict its behavior. 
+Deeper trees constitute greater design complexity, since more methods and classes are involved; but the greater the potential for reuse of inherited methods.</definition>
+			<solution></solution>
+			<indicator>Inheritance</indicator>
+			<values>normal(0,3), medium(0,3,6), high(3,6)</values>
+		</metric>
+		
+		<metric id="MHF" class-name="edu.umd.msswe.ece591.diagnose.metrics.MHF" > 
+			<name>Method Hiding Factor</name>
+			<definition>MHF is defined as the ratio of the sum of the invisibilities of all methods defined in all classes to the total number of methods defined in the system under consideration. Method and hiding factor measure how variables and methods are encapsulated in a class.  The invisibility of a method is the percentage of the total classes from which this method is not visible.
+Note : inherited methods are not considered.
+Rationale: A low MHF indicates insufficiently abstracted implementation. A large proportion of methods are unprotected and the probability of errors is high.
+A high MHF indicates very little functionality. It may also indicate that the design includes a high proportion of specialized methods that are not available for reuse.</definition>
+			<solution></solution>
+			<indicator>Encapsulation</indicator>
+			<values>very_low(5,10), low(5,10,15), normal(10,15,20,25), medium(20,25,30), high(25,30)</values>
+		</metric>
+		<metric id="AHF" class-name="edu.umd.msswe.ece591.diagnose.metrics.AHF" > 
+			<name>Attribute Hiding Factor</name>
+			<definition>AHF is defined as the ratio of the sum of the invisibilities of all attributes defined in all classes to the total number of attributes defined in the system under consideration. Attribute hiding factor measure how variables are encapsulated in a class. </definition>
+			<solution></solution>
+			<indicator>Encapsulation</indicator>
+			<values>normal(90,100), medium(80,90,100), high(80,90)</values>
+		</metric>
+		<metric id="MIF" class-name="edu.umd.msswe.ece591.diagnose.metrics.MIF" > 
+			<name>Method Inheritance Factor</name>
+			<definition>MIF is defined as the ratio of the sum of the inherited methods in all classes of the system under consideration to the total number of available methods ( locally defined plus inherited) for all classes.
+Rationale: MIF should be in a reasonable range, not too low and not too high either. Too high a value indicates either superfluous inheritance or too wide member scopes. A low value indicates lack of inheritance or heavy use of Overrides/Shadows.</definition>
+			<solution></solution>
+			<indicator>Inheritance</indicator>
+			<values>very-low(15,20), low(15,20,25), normal(20,25,75,80), medium(75,80,85), high(80,85)</values>
+		</metric>
+		<metric id="AIF" class-name="edu.umd.msswe.ece591.diagnose.metrics.AIF" > 
+			<name>Attribute Inheritance Factor</name>
+			<definition>AIF is defined as the ratio of the sum of inherited attributes in all classes of the system under consideration to the total number of available attributes ( locally defined plus inherited ) for all classes.
+Rationale: AIF should be in a reasonable range, not too low and not too high either. Too high a value indicates either superfluous inheritance or too wide member scopes. A low value indicates lack of inheritance or heavy use of Overrides/Shadows.</definition>
+			<solution></solution>
+			<indicator>Inheritance</indicator>
+			<values>normal(40,50), medium(40,50,55,60), high(55,60)</values>
+		</metric>
+ 		<metric id="COF" class-name="edu.umd.msswe.ece591.diagnose.metrics.COF" > 
+			<name>Coupling Factor</name>
+			<definition>Coupling Factor measures the actual couplings among classes in relation to the maximum number of possible couplings.
+Rationale: coupling relations increase complexity, reduce encapsulation and potential reuse, and limit understandability and maintainability. Very high values of CF should be avoided. However, classes must cooperate somehow, and CF is expected to be lower bounded. </definition>
+			<solution></solution>
+			<indicator>Coupling</indicator>
+			<values>normal(10,20), medium(10,20,30), high(20,30)</values>
+		</metric> 
+		<metric id="POF" class-name="edu.umd.msswe.ece591.diagnose.metrics.POF" > 
+			<name>Polymorphism Factor</name>
+			<definition>Polymorphism Factor measures the degree of method overriding in the class inheritance tree. It equals the number of actual method overrides divided by the maximum number of possible method overrides.
+Rational: Polymorphism arises from inheritance and has its pros and cons. We can intuitively expect that polymorphism (Overrides) can be used to a reasonable extent to keep the code clear, but that excessively polymorphic code may be too complex to understand</definition>
+			<solution></solution>
+			<indicator>Polymorphism</indicator>
+			<values>normal(10,15), medium(10,15,20), high(15,20)</values>
+		</metric>
+	</metrics>
+
+	<fuzzy-set-type>
+		<fuzzy-set class-name="edu.umd.msswe.ece591.diagnose.fuzzyrules.FuzzySetAscendent" type="ascendent-set"/>
+		<fuzzy-set class-name="edu.umd.msswe.ece591.diagnose.fuzzyrules.FuzzySetDescendent" type="descendent-set"/>
+		<fuzzy-set class-name="edu.umd.msswe.ece591.diagnose.fuzzyrules.FuzzySetTriangle" type="triangle-set"/>
+		<fuzzy-set class-name="edu.umd.msswe.ece591.diagnose.fuzzyrules.FuzzySetTrapezoide" type="trapezoide-set"/>
+	</fuzzy-set-type>
+
+ 	<fuzzy-sets>
+        <!-- WMC -->
+        <fuzzy-set id="normal-wmc" type="descendent-set" label="normal" value="10,20" max="50" />
+        <fuzzy-set id="medium-wmc" type="triangle-set" label="medium" value="10,20,30" max="50" />
+        <fuzzy-set id="high-wmc" type="ascendent-set" label="high" value="20,30" max="50" />
+        <!-- RFC -->
+        <fuzzy-set id="normal-rfc" type="descendent-set" label="normal" value="30,40" max="100" />
+        <fuzzy-set id="medium-rfc" type="triangle-set" label="medium" value="30,40,50" max="100" />
+        <fuzzy-set id="high-rfc" type="ascendent-set" label="high" value="40,50" max="100" />
+        <!-- LCOM2 -->
+        <fuzzy-set id="normal-lcom2" type="descendent-set" label="normal" value="60,70" max="100" />
+        <fuzzy-set id="medium-lcom2" type="triangle-set" label="medium" value="60,70,80" max="100" />
+        <fuzzy-set id="high-lcom2" type="ascendent-set" label="high" value="70,80" max="100" />
+        <!-- CBO -->
+        <fuzzy-set id="normal-cbo" type="descendent-set" label="normal" value="5,10" max="20" />
+        <fuzzy-set id="medium-cbo" type="triangle-set" label="medium" value="5,10,15" max="20" />
+        <fuzzy-set id="high-cbo" type="ascendent-set" label="high" value="10,15" max="20" />
+        <!-- DIT -->
+        <fuzzy-set id="normal-dit" type="descendent-set" label="normal" value="3,6" max="20" />
+        <fuzzy-set id="medium-dit" type="triangle-set" label="medium" value="3,6,9" max="20" />
+        <fuzzy-set id="high-dit" type="ascendent-set" label="high" value="6,9" max="20" />
+        <!-- NOC -->
+        <fuzzy-set id="normal-noc" type="descendent-set" label="normal" value="10,20" max="50" />
+        <fuzzy-set id="medium-noc" type="triangle-set" label="medium" value="10,20,30" max="50" />
+        <fuzzy-set id="high-noc" type="ascendent-set" label="high" value="20,30" max="50" />
+        <!-- LOC -->
+        <fuzzy-set id="normal-loc" type="descendent-set" label="normal" value="750,1000" max="10000" />
+        <fuzzy-set id="medium-loc" type="triangle-set" label="medium" value="750,1000,1250" max="10000" />
+        <fuzzy-set id="high-loc" type="ascendent-set" label="high" value="1000,1250" max="10000" />
+        <!-- MHF -->
+        <fuzzy-set id="very-low-mhf" type="descendent-set" label="very_low" value="5,10" max="100" />
+        <fuzzy-set id="low-mhf" type="triangle-set" label="low" value="5,10,15" max="100" />
+        <fuzzy-set id="normal-mhf" type="trapezoide-set" label="normal" value="10,15,20,25" max="100" />
+        <fuzzy-set id="medium-mhf" type="triangle-set" label="medium" value="20,25,30" max="100" />
+        <fuzzy-set id="high-mhf" type="ascendent-set" label="high" value="25,30" max="100" />
+        <!-- AHF -->
+        <fuzzy-set id="normal-ahf" type="ascendent-set" label="normal" value="80,90" max="100" />
+        <fuzzy-set id="medium-ahf" type="triangle-set" label="medium" value="70,80,90" max="100" />
+        <fuzzy-set id="high-ahf" type="descendent-set" label="high" value="70,80" max="100" />
+        <!-- MIF -->
+        <fuzzy-set id="very-low-mif" type="descendent-set" label="very-low" value="15,20" max="100" />
+        <fuzzy-set id="low-mif" type="triangle-set" label="low" value="15,20,25" max="100" />
+        <fuzzy-set id="normal-mif" type="trapezoide-set" label="normal" value="20,25,75,80" max="100" />
+        <fuzzy-set id="medium-mif" type="triangle-set" label="medium" value="75,80,85" max="100" />
+        <fuzzy-set id="high-mif" type="ascendent-set" label="high" value="80,85" max="100" />
+        <!-- AIF -->
+        <fuzzy-set id="normal-aif" type="descendent-set" label="normal" value="40,50" max="100" />
+        <fuzzy-set id="medium-aif" type="trapezoide-set" label="medium" value="40,50,55,65" max="100" />
+        <fuzzy-set id="high-aif" type="ascendent-set" label="high" value="55,65" max="100" />
+        <!-- COF -->
+        <fuzzy-set id="normal-cof" type="descendent-set" label="normal" value="10,20" max="100" />
+        <fuzzy-set id="medium-cof" type="triangle-set" label="medium" value="10,20,30" max="100" />
+        <fuzzy-set id="high-cof" type="ascendent-set" label="high" value="20,30" max="100" />
+        <!-- POF -->
+        <fuzzy-set id="high-pof" type="descendent-set" label="high" value="0,10" max="100" />
+        <fuzzy-set id="medium-pof" type="triangle-set" label="medium" value="0,10,20" max="100" />
+        <fuzzy-set id="normal-pof" type="ascendent-set" label="normal" value="10,20" max="100" />
+        <!-- FINAL -->
+        <fuzzy-set id="critical" type="triangle-set" label="critical" value="80,90,100" max="100" />
+        <fuzzy-set id="high" type="triangle-set" label="high" value="70,80,90" max="100" />
+        <fuzzy-set id="medium" type="triangle-set" label="medium" value="60,70,80" max="100" />
+        <fuzzy-set id="normal" type="descendent-set" label="low" value="60,70" max="100" />
+    </fuzzy-sets>
+
+	<fuzzy-output>
+		<label id ="CRITICAL" min="85" max="100" />
+		<label id ="HIGH" min="75" max="84" />
+		<label id ="MEDIUM" min="65" max="74" />
+		<label id ="NORMAL" min="0" max="64" />
+	</fuzzy-output>	
+
+	<fuzzy-rules-class>
+		<fuzzy-rule id='fuzzyrule1'>
+			<if>
+			<and>
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='high-lcom2' />
+			<or>
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='high-cbo' />
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='medium-cbo' />
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='normal-cbo' />
+			</or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			</or>
+			<or>
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='high-loc' />
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='high-wmc' />
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='high-rfc' />
+			</or>
+			</and>
+			</if>
+			<then fuzzy-set-id='critical' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule2'>
+			<if>
+			<and>
+			<or>
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='high-lcom2' />
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='medium-lcom2' />
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='normal-lcom2' />
+			</or>
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='high-cbo' />
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			</or>
+			<or>
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='high-loc' />
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='high-wmc' />
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='high-rfc' />
+			</or>
+			</and>
+			</if>
+			<then fuzzy-set-id='critical' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule3'>
+			<if>
+			<and>
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='high-lcom2' />
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='high-cbo' />
+			<or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='medium-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='normal-dit' />
+			</or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='medium-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='normal-noc' />
+			</or>
+			</or>
+			<or>
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='high-loc' />
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='high-wmc' />
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='high-rfc' />
+			</or>
+			</and>
+			</if>
+			<then fuzzy-set-id='critical' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule4'>
+			<if>
+			<and>
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='high-lcom2' />
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='high-cbo' />
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='high-loc' />
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='medium-loc' />
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='normal-loc' />
+			</or>
+			<or>
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='high-wmc' />
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='medium-wmc' />
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='normal-wmc' />
+			</or>
+			<or>
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='high-rfc' />
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='medium-rfc' />
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='normal-rfc' />
+			</or>
+			</or>
+			</and>
+			</if>
+			<then fuzzy-set-id='critical' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule5'>
+			<if>
+			<and>
+			<or>
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='high-lcom2' />
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='medium-lcom2' />
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='normal-lcom2' />
+			</or>
+			<or>
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='high-cbo' />
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='medium-cbo' />
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='normal-cbo' />
+			</or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			</or>
+			<or>
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='high-loc' />
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='high-wmc' />
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='high-rfc' />
+			</or>
+			<not fuzzy-rule-id='fuzzyrule1'/>
+			<not fuzzy-rule-id='fuzzyrule2'/>
+			<not fuzzy-rule-id='fuzzyrule3'/>
+			<not fuzzy-rule-id='fuzzyrule4'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='high' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule6'>
+			<if>
+			<and>
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='high-lcom2' />
+			<or>
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='high-cbo' />
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='medium-cbo' />
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='normal-cbo' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='medium-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='normal-dit' />
+			</or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='medium-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='normal-noc' />
+			</or>
+			</or>
+			<or>
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='high-loc' />
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='high-wmc' />
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='high-rfc' />
+			</or>
+			<not fuzzy-rule-id='fuzzyrule1'/>
+			<not fuzzy-rule-id='fuzzyrule2'/>
+			<not fuzzy-rule-id='fuzzyrule3'/>
+			<not fuzzy-rule-id='fuzzyrule4'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='high' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule7'>
+			<if>
+			<and>
+			<or>
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='high-lcom2' />
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='medium-lcom2' />
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='normal-lcom2' />
+			</or>
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='high-cbo' />
+			<or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='medium-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='normal-dit' />
+			</or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='medium-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='normal-noc' />
+			</or>
+			</or>
+			<or>
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='high-loc' />
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='high-wmc' />
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='high-rfc' />
+			</or>
+			<not fuzzy-rule-id='fuzzyrule1'/>
+			<not fuzzy-rule-id='fuzzyrule2'/>
+			<not fuzzy-rule-id='fuzzyrule3'/>
+			<not fuzzy-rule-id='fuzzyrule4'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='high' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule8'>
+			<if>
+			<and>
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='high-lcom2' />
+			<or>
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='high-cbo' />
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='medium-cbo' />
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='normal-cbo' />
+			</or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='high-loc' />
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='medium-loc' />
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='normal-loc' />
+			</or>
+			<or>
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='high-wmc' />
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='medium-wmc' />
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='normal-wmc' />
+			</or>
+			<or>
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='high-rfc' />
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='medium-rfc' />
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='normal-rfc' />
+			</or>
+			</or>
+			<not fuzzy-rule-id='fuzzyrule1'/>
+			<not fuzzy-rule-id='fuzzyrule2'/>
+			<not fuzzy-rule-id='fuzzyrule3'/>
+			<not fuzzy-rule-id='fuzzyrule4'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='high' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule9'>
+			<if>
+			<and>
+			<or>
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='high-lcom2' />
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='medium-lcom2' />
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='normal-lcom2' />
+			</or>
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='high-cbo' />
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='high-loc' />
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='medium-loc' />
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='normal-loc' />
+			</or>
+			<or>
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='high-wmc' />
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='medium-wmc' />
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='normal-wmc' />
+			</or>
+			<or>
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='high-rfc' />
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='medium-rfc' />
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='normal-rfc' />
+			</or>
+			</or>
+			<not fuzzy-rule-id='fuzzyrule1'/>
+			<not fuzzy-rule-id='fuzzyrule2'/>
+			<not fuzzy-rule-id='fuzzyrule3'/>
+			<not fuzzy-rule-id='fuzzyrule4'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='high' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule10'>
+			<if>
+			<and>
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='high-lcom2' />
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='high-cbo' />
+			<or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='medium-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='normal-dit' />
+			</or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='medium-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='normal-noc' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='high-loc' />
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='medium-loc' />
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='normal-loc' />
+			</or>
+			<or>
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='high-wmc' />
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='medium-wmc' />
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='normal-wmc' />
+			</or>
+			<or>
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='high-rfc' />
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='medium-rfc' />
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='normal-rfc' />
+			</or>
+			</or>
+			<not fuzzy-rule-id='fuzzyrule1'/>
+			<not fuzzy-rule-id='fuzzyrule2'/>
+			<not fuzzy-rule-id='fuzzyrule3'/>
+			<not fuzzy-rule-id='fuzzyrule4'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='high' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule11'>
+			<if>
+			<and>
+			<or>
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='high-lcom2' />
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='medium-lcom2' />
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='normal-lcom2' />
+			</or>
+			<or>
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='high-cbo' />
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='medium-cbo' />
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='normal-cbo' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='medium-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='normal-dit' />
+			</or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='medium-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='normal-noc' />
+			</or>
+			</or>
+			<or>
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='high-loc' />
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='high-wmc' />
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='high-rfc' />
+			</or>
+			<not fuzzy-rule-id='fuzzyrule5'/>
+			<not fuzzy-rule-id='fuzzyrule6'/>
+			<not fuzzy-rule-id='fuzzyrule7'/>
+			<not fuzzy-rule-id='fuzzyrule8'/>
+			<not fuzzy-rule-id='fuzzyrule9'/>
+			<not fuzzy-rule-id='fuzzyrule10'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='medium' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule12'>
+			<if>
+			<and>
+			<or>
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='high-lcom2' />
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='medium-lcom2' />
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='normal-lcom2' />
+			</or>
+			<or>
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='high-cbo' />
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='medium-cbo' />
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='normal-cbo' />
+			</or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='high-loc' />
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='medium-loc' />
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='normal-loc' />
+			</or>
+			<or>
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='high-wmc' />
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='medium-wmc' />
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='normal-wmc' />
+			</or>
+			<or>
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='high-rfc' />
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='medium-rfc' />
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='normal-rfc' />
+			</or>
+			</or>
+			<not fuzzy-rule-id='fuzzyrule5'/>
+			<not fuzzy-rule-id='fuzzyrule6'/>
+			<not fuzzy-rule-id='fuzzyrule7'/>
+			<not fuzzy-rule-id='fuzzyrule8'/>
+			<not fuzzy-rule-id='fuzzyrule9'/>
+			<not fuzzy-rule-id='fuzzyrule10'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='medium' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule13'>
+			<if>
+			<and>
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='high-lcom2' />
+			<or>
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='high-cbo' />
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='medium-cbo' />
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='normal-cbo' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='medium-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='normal-dit' />
+			</or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='medium-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='normal-noc' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='high-loc' />
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='medium-loc' />
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='normal-loc' />
+			</or>
+			<or>
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='high-wmc' />
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='medium-wmc' />
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='normal-wmc' />
+			</or>
+			<or>
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='high-rfc' />
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='medium-rfc' />
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='normal-rfc' />
+			</or>
+			</or>
+			<not fuzzy-rule-id='fuzzyrule5'/>
+			<not fuzzy-rule-id='fuzzyrule6'/>
+			<not fuzzy-rule-id='fuzzyrule7'/>
+			<not fuzzy-rule-id='fuzzyrule8'/>
+			<not fuzzy-rule-id='fuzzyrule9'/>
+			<not fuzzy-rule-id='fuzzyrule10'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='medium' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule14'>
+			<if>
+			<and>
+			<or>
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='high-lcom2' />
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='medium-lcom2' />
+			<condition metric-id='LCOM2' operation='is' fuzzy-set-id='normal-lcom2' />
+			</or>
+			<condition metric-id='CBO' operation='is' fuzzy-set-id='high-cbo' />
+			<or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='medium-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='normal-dit' />
+			</or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='medium-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='normal-noc' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='high-loc' />
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='medium-loc' />
+			<condition metric-id='LOC' operation='is' fuzzy-set-id='normal-loc' />
+			</or>
+			<or>
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='high-wmc' />
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='medium-wmc' />
+			<condition metric-id='WMC' operation='is' fuzzy-set-id='normal-wmc' />
+			</or>
+			<or>
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='high-rfc' />
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='medium-rfc' />
+			<condition metric-id='RFC' operation='is' fuzzy-set-id='normal-rfc' />
+			</or>
+			</or>
+			<not fuzzy-rule-id='fuzzyrule5'/>
+			<not fuzzy-rule-id='fuzzyrule6'/>
+			<not fuzzy-rule-id='fuzzyrule7'/>
+			<not fuzzy-rule-id='fuzzyrule8'/>
+			<not fuzzy-rule-id='fuzzyrule9'/>
+			<not fuzzy-rule-id='fuzzyrule10'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='medium' />
+		</fuzzy-rule>
+	</fuzzy-rules-class>
+	<fuzzy-rules-app>
+		<fuzzy-rule id='fuzzyrule1'>
+			<if>
+			<and>
+			<or>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='medium-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='normal-cof' />
+			</or>
+			<or>
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='medium-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='normal-pof' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			</or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			</or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			</or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			</or>
+			</and>
+			</if>
+			<then fuzzy-set-id='critical' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule2'>
+			<if>
+			<and>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<or>
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='medium-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='normal-pof' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			</or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			</or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='medium-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='normal-mhf' />
+			</or>
+			<or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='medium-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='normal-ahf' />
+			</or>
+			</or>
+			</and>
+			</if>
+			<then fuzzy-set-id='critical' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule3'>
+			<if>
+			<and>
+			<or>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='medium-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='normal-cof' />
+			</or>
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			</or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			</or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='medium-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='normal-mhf' />
+			</or>
+			<or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='medium-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='normal-ahf' />
+			</or>
+			</or>
+			</and>
+			</if>
+			<then fuzzy-set-id='critical' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule4'>
+			<if>
+			<and>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<or>
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='medium-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='normal-pof' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='medium-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='normal-mif' />
+			</or>
+			<or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='medium-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='normal-aif' />
+			</or>
+			</or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			</or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			</or>
+			</and>
+			</if>
+			<then fuzzy-set-id='critical' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule5'>
+			<if>
+			<and>
+			<or>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='medium-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='normal-cof' />
+			</or>
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='medium-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='normal-mif' />
+			</or>
+			<or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='medium-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='normal-aif' />
+			</or>
+			</or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			</or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			</or>
+			</and>
+			</if>
+			<then fuzzy-set-id='critical' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule6'>
+			<if>
+			<and>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='medium-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='normal-mif' />
+			</or>
+			<or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='medium-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='normal-aif' />
+			</or>
+			</or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='medium-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='normal-mhf' />
+			</or>
+			<or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='medium-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='normal-ahf' />
+			</or>
+			</or>
+			</and>
+			</if>
+			<then fuzzy-set-id='critical' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule7'>
+			<if>
+			<and>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<or>
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='medium-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='normal-pof' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			</or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='medium-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='normal-noc' />
+			</or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='medium-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='normal-dit' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			</or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			</or>
+			</and>
+			</if>
+			<then fuzzy-set-id='critical' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule8'>
+			<if>
+			<and>
+			<or>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='medium-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='normal-cof' />
+			</or>
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			</or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='medium-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='normal-noc' />
+			</or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='medium-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='normal-dit' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			</or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			</or>
+			</and>
+			</if>
+			<then fuzzy-set-id='critical' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule9'>
+			<if>
+			<and>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='medium-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='normal-mif' />
+			</or>
+			<or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='medium-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='normal-aif' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='medium-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='normal-noc' />
+			</or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='medium-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='normal-dit' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			</or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			</or>
+			</and>
+			</if>
+			<then fuzzy-set-id='critical' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule10'>
+			<if>
+			<and>
+			<or>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='medium-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='normal-cof' />
+			</or>
+			<or>
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='medium-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='normal-pof' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			</or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			</or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='medium-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='normal-mhf' />
+			</or>
+			<or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='medium-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='normal-ahf' />
+			</or>
+			</or>
+			<not fuzzy-rule-id='fuzzyrule1'/>
+			<not fuzzy-rule-id='fuzzyrule2'/>
+			<not fuzzy-rule-id='fuzzyrule3'/>
+			<not fuzzy-rule-id='fuzzyrule4'/>
+			<not fuzzy-rule-id='fuzzyrule5'/>
+			<not fuzzy-rule-id='fuzzyrule6'/>
+			<not fuzzy-rule-id='fuzzyrule7'/>
+			<not fuzzy-rule-id='fuzzyrule8'/>
+			<not fuzzy-rule-id='fuzzyrule9'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='high' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule11'>
+			<if>
+			<and>
+			<or>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='medium-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='normal-cof' />
+			</or>
+			<or>
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='medium-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='normal-pof' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='medium-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='normal-mif' />
+			</or>
+			<or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='medium-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='normal-aif' />
+			</or>
+			</or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			</or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			</or>
+			<not fuzzy-rule-id='fuzzyrule1'/>
+			<not fuzzy-rule-id='fuzzyrule2'/>
+			<not fuzzy-rule-id='fuzzyrule3'/>
+			<not fuzzy-rule-id='fuzzyrule4'/>
+			<not fuzzy-rule-id='fuzzyrule5'/>
+			<not fuzzy-rule-id='fuzzyrule6'/>
+			<not fuzzy-rule-id='fuzzyrule7'/>
+			<not fuzzy-rule-id='fuzzyrule8'/>
+			<not fuzzy-rule-id='fuzzyrule9'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='high' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule12'>
+			<if>
+			<and>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<or>
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='medium-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='normal-pof' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='medium-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='normal-mif' />
+			</or>
+			<or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='medium-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='normal-aif' />
+			</or>
+			</or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='medium-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='normal-mhf' />
+			</or>
+			<or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='medium-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='normal-ahf' />
+			</or>
+			</or>
+			<not fuzzy-rule-id='fuzzyrule1'/>
+			<not fuzzy-rule-id='fuzzyrule2'/>
+			<not fuzzy-rule-id='fuzzyrule3'/>
+			<not fuzzy-rule-id='fuzzyrule4'/>
+			<not fuzzy-rule-id='fuzzyrule5'/>
+			<not fuzzy-rule-id='fuzzyrule6'/>
+			<not fuzzy-rule-id='fuzzyrule7'/>
+			<not fuzzy-rule-id='fuzzyrule8'/>
+			<not fuzzy-rule-id='fuzzyrule9'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='high' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule13'>
+			<if>
+			<and>
+			<or>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='medium-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='normal-cof' />
+			</or>
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='medium-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='normal-mif' />
+			</or>
+			<or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='medium-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='normal-aif' />
+			</or>
+			</or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='medium-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='normal-mhf' />
+			</or>
+			<or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='medium-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='normal-ahf' />
+			</or>
+			</or>
+			<not fuzzy-rule-id='fuzzyrule1'/>
+			<not fuzzy-rule-id='fuzzyrule2'/>
+			<not fuzzy-rule-id='fuzzyrule3'/>
+			<not fuzzy-rule-id='fuzzyrule4'/>
+			<not fuzzy-rule-id='fuzzyrule5'/>
+			<not fuzzy-rule-id='fuzzyrule6'/>
+			<not fuzzy-rule-id='fuzzyrule7'/>
+			<not fuzzy-rule-id='fuzzyrule8'/>
+			<not fuzzy-rule-id='fuzzyrule9'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='high' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule14'>
+			<if>
+			<and>
+			<or>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='medium-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='normal-cof' />
+			</or>
+			<or>
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='medium-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='normal-pof' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			</or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='medium-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='normal-noc' />
+			</or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='medium-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='normal-dit' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			</or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			</or>
+			<not fuzzy-rule-id='fuzzyrule1'/>
+			<not fuzzy-rule-id='fuzzyrule2'/>
+			<not fuzzy-rule-id='fuzzyrule3'/>
+			<not fuzzy-rule-id='fuzzyrule4'/>
+			<not fuzzy-rule-id='fuzzyrule5'/>
+			<not fuzzy-rule-id='fuzzyrule6'/>
+			<not fuzzy-rule-id='fuzzyrule7'/>
+			<not fuzzy-rule-id='fuzzyrule8'/>
+			<not fuzzy-rule-id='fuzzyrule9'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='high' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule15'>
+			<if>
+			<and>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<or>
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='medium-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='normal-pof' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			</or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='medium-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='normal-noc' />
+			</or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='medium-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='normal-dit' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='medium-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='normal-mhf' />
+			</or>
+			<or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='medium-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='normal-ahf' />
+			</or>
+			</or>
+			<not fuzzy-rule-id='fuzzyrule1'/>
+			<not fuzzy-rule-id='fuzzyrule2'/>
+			<not fuzzy-rule-id='fuzzyrule3'/>
+			<not fuzzy-rule-id='fuzzyrule4'/>
+			<not fuzzy-rule-id='fuzzyrule5'/>
+			<not fuzzy-rule-id='fuzzyrule6'/>
+			<not fuzzy-rule-id='fuzzyrule7'/>
+			<not fuzzy-rule-id='fuzzyrule8'/>
+			<not fuzzy-rule-id='fuzzyrule9'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='high' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule16'>
+			<if>
+			<and>
+			<or>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='medium-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='normal-cof' />
+			</or>
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			</or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='medium-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='normal-noc' />
+			</or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='medium-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='normal-dit' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='medium-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='normal-mhf' />
+			</or>
+			<or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='medium-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='normal-ahf' />
+			</or>
+			</or>
+			<not fuzzy-rule-id='fuzzyrule1'/>
+			<not fuzzy-rule-id='fuzzyrule2'/>
+			<not fuzzy-rule-id='fuzzyrule3'/>
+			<not fuzzy-rule-id='fuzzyrule4'/>
+			<not fuzzy-rule-id='fuzzyrule5'/>
+			<not fuzzy-rule-id='fuzzyrule6'/>
+			<not fuzzy-rule-id='fuzzyrule7'/>
+			<not fuzzy-rule-id='fuzzyrule8'/>
+			<not fuzzy-rule-id='fuzzyrule9'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='high' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule17'>
+			<if>
+			<and>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<or>
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='medium-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='normal-pof' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='medium-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='normal-mif' />
+			</or>
+			<or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='medium-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='normal-aif' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='medium-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='normal-noc' />
+			</or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='medium-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='normal-dit' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			</or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			</or>
+			<not fuzzy-rule-id='fuzzyrule1'/>
+			<not fuzzy-rule-id='fuzzyrule2'/>
+			<not fuzzy-rule-id='fuzzyrule3'/>
+			<not fuzzy-rule-id='fuzzyrule4'/>
+			<not fuzzy-rule-id='fuzzyrule5'/>
+			<not fuzzy-rule-id='fuzzyrule6'/>
+			<not fuzzy-rule-id='fuzzyrule7'/>
+			<not fuzzy-rule-id='fuzzyrule8'/>
+			<not fuzzy-rule-id='fuzzyrule9'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='high' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule18'>
+			<if>
+			<and>
+			<or>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='medium-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='normal-cof' />
+			</or>
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='medium-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='normal-mif' />
+			</or>
+			<or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='medium-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='normal-aif' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='medium-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='normal-noc' />
+			</or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='medium-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='normal-dit' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			</or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			</or>
+			<not fuzzy-rule-id='fuzzyrule1'/>
+			<not fuzzy-rule-id='fuzzyrule2'/>
+			<not fuzzy-rule-id='fuzzyrule3'/>
+			<not fuzzy-rule-id='fuzzyrule4'/>
+			<not fuzzy-rule-id='fuzzyrule5'/>
+			<not fuzzy-rule-id='fuzzyrule6'/>
+			<not fuzzy-rule-id='fuzzyrule7'/>
+			<not fuzzy-rule-id='fuzzyrule8'/>
+			<not fuzzy-rule-id='fuzzyrule9'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='high' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule19'>
+			<if>
+			<and>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='medium-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='normal-mif' />
+			</or>
+			<or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='medium-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='normal-aif' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='medium-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='normal-noc' />
+			</or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='medium-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='normal-dit' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='medium-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='normal-mhf' />
+			</or>
+			<or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='medium-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='normal-ahf' />
+			</or>
+			</or>
+			<not fuzzy-rule-id='fuzzyrule1'/>
+			<not fuzzy-rule-id='fuzzyrule2'/>
+			<not fuzzy-rule-id='fuzzyrule3'/>
+			<not fuzzy-rule-id='fuzzyrule4'/>
+			<not fuzzy-rule-id='fuzzyrule5'/>
+			<not fuzzy-rule-id='fuzzyrule6'/>
+			<not fuzzy-rule-id='fuzzyrule7'/>
+			<not fuzzy-rule-id='fuzzyrule8'/>
+			<not fuzzy-rule-id='fuzzyrule9'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='high' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule20'>
+			<if>
+			<and>
+			<or>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='medium-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='normal-cof' />
+			</or>
+			<or>
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='medium-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='normal-pof' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='medium-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='normal-mif' />
+			</or>
+			<or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='medium-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='normal-aif' />
+			</or>
+			</or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='medium-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='normal-mhf' />
+			</or>
+			<or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='medium-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='normal-ahf' />
+			</or>
+			</or>
+			<not fuzzy-rule-id='fuzzyrule10'/>
+			<not fuzzy-rule-id='fuzzyrule11'/>
+			<not fuzzy-rule-id='fuzzyrule12'/>
+			<not fuzzy-rule-id='fuzzyrule13'/>
+			<not fuzzy-rule-id='fuzzyrule14'/>
+			<not fuzzy-rule-id='fuzzyrule15'/>
+			<not fuzzy-rule-id='fuzzyrule16'/>
+			<not fuzzy-rule-id='fuzzyrule17'/>
+			<not fuzzy-rule-id='fuzzyrule18'/>
+			<not fuzzy-rule-id='fuzzyrule19'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='medium' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule21'>
+			<if>
+			<and>
+			<or>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='medium-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='normal-cof' />
+			</or>
+			<or>
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='medium-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='normal-pof' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			</or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='medium-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='normal-noc' />
+			</or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='medium-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='normal-dit' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='medium-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='normal-mhf' />
+			</or>
+			<or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='medium-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='normal-ahf' />
+			</or>
+			</or>
+ 			<not fuzzy-rule-id='fuzzyrule10'/>
+			<not fuzzy-rule-id='fuzzyrule11'/>
+			<not fuzzy-rule-id='fuzzyrule12'/>
+			<not fuzzy-rule-id='fuzzyrule13'/>
+			<not fuzzy-rule-id='fuzzyrule14'/>
+			<not fuzzy-rule-id='fuzzyrule15'/>
+			<not fuzzy-rule-id='fuzzyrule16'/>
+			<not fuzzy-rule-id='fuzzyrule17'/>
+			<not fuzzy-rule-id='fuzzyrule18'/>
+			<not fuzzy-rule-id='fuzzyrule19'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='medium' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule22'>
+			<if>
+			<and>
+			<or>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='medium-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='normal-cof' />
+			</or>
+			<or>
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='medium-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='normal-pof' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='medium-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='normal-mif' />
+			</or>
+			<or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='medium-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='normal-aif' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='medium-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='normal-noc' />
+			</or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='medium-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='normal-dit' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			</or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			</or>
+			<not fuzzy-rule-id='fuzzyrule10'/>
+			<not fuzzy-rule-id='fuzzyrule11'/>
+			<not fuzzy-rule-id='fuzzyrule12'/>
+			<not fuzzy-rule-id='fuzzyrule13'/>
+			<not fuzzy-rule-id='fuzzyrule14'/>
+			<not fuzzy-rule-id='fuzzyrule15'/>
+			<not fuzzy-rule-id='fuzzyrule16'/>
+			<not fuzzy-rule-id='fuzzyrule17'/>
+			<not fuzzy-rule-id='fuzzyrule18'/>
+			<not fuzzy-rule-id='fuzzyrule19'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='medium' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule23'>
+			<if>
+			<and>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<or>
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='medium-pof' />
+			<condition metric-id='POF' operation='is' fuzzy-set-id='normal-pof' />
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='medium-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='normal-mif' />
+			</or>
+			<or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='medium-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='normal-aif' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='medium-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='normal-noc' />
+			</or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='medium-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='normal-dit' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='medium-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='normal-mhf' />
+			</or>
+			<or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='medium-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='normal-ahf' />
+			</or>
+			</or>
+			<not fuzzy-rule-id='fuzzyrule10'/>
+			<not fuzzy-rule-id='fuzzyrule11'/>
+			<not fuzzy-rule-id='fuzzyrule12'/>
+			<not fuzzy-rule-id='fuzzyrule13'/>
+			<not fuzzy-rule-id='fuzzyrule14'/>
+			<not fuzzy-rule-id='fuzzyrule15'/>
+			<not fuzzy-rule-id='fuzzyrule16'/>
+			<not fuzzy-rule-id='fuzzyrule17'/>
+			<not fuzzy-rule-id='fuzzyrule18'/>
+			<not fuzzy-rule-id='fuzzyrule19'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='medium' />
+		</fuzzy-rule>
+		<fuzzy-rule id='fuzzyrule24'>
+			<if>
+			<and>
+			<or>
+			<condition metric-id='COF' operation='is' fuzzy-set-id='high-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='medium-cof' />
+			<condition metric-id='COF' operation='is' fuzzy-set-id='normal-cof' />
+			</or>
+			<condition metric-id='POF' operation='is' fuzzy-set-id='high-pof' />
+			<or>
+			<or>
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='high-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='very-low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='medium-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='low-mif' />
+			<condition metric-id='MIF' operation='is' fuzzy-set-id='normal-mif' />
+			</or>
+			<or>
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='high-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='medium-aif' />
+			<condition metric-id='AIF' operation='is' fuzzy-set-id='normal-aif' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='high-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='medium-noc' />
+			<condition metric-id='NOC' operation='is' fuzzy-set-id='normal-noc' />
+			</or>
+			<or>
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='high-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='medium-dit' />
+			<condition metric-id='DIT' operation='is' fuzzy-set-id='normal-dit' />
+			</or>
+			</or>
+			<or>
+			<or>
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='high-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='very-low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='medium-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='low-mhf' />
+			<condition metric-id='MHF' operation='is' fuzzy-set-id='normal-mhf' />
+			</or>
+			<or>
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='high-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='medium-ahf' />
+			<condition metric-id='AHF' operation='is' fuzzy-set-id='normal-ahf' />
+			</or>
+			</or>
+			<not fuzzy-rule-id='fuzzyrule10'/>
+			<not fuzzy-rule-id='fuzzyrule11'/>
+			<not fuzzy-rule-id='fuzzyrule12'/>
+			<not fuzzy-rule-id='fuzzyrule13'/>
+			<not fuzzy-rule-id='fuzzyrule14'/>
+			<not fuzzy-rule-id='fuzzyrule15'/>
+			<not fuzzy-rule-id='fuzzyrule16'/>
+			<not fuzzy-rule-id='fuzzyrule17'/>
+			<not fuzzy-rule-id='fuzzyrule18'/>
+			<not fuzzy-rule-id='fuzzyrule19'/>
+			</and>
+			</if>
+			<then fuzzy-set-id='medium' />
+		</fuzzy-rule>
+	</fuzzy-rules-app>	
+
+</oodiagnose>

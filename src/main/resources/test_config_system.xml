@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oodiagnose home="${oodiagnose.home}" 
+	output="xml:withMessages"         
+	outputFile="${build.log.dir}/${ant.project.name}-OODiagnose.xml"
+	workingDirectory="c:\temp\test"
+	sourcePath="${java.source.dir}">
+
+	<fuzzy-rules-engine name="FuzzyRuleBasedEngine" class-name="edu.umd.msswe.ece591.diagnose.fuzzyrules.FuzzyRuleBasedEngine">
+		<inference-method class="edu.umd.msswe.ece591.diagnose.fuzzyrules.ClippingMethod" name="clipping method"/>
+		<defuzzification-method class="edu.umd.msswe.ece591.diagnose.fuzzyrules.MeanOfMax" name="mean of max"/>
+	</fuzzy-rules-engine>
+	
+	<fuzzy-output>
+		<output label="red" min="85" max="100" />
+		<output label="yellow" min="75" max="84" />
+		<output label="white" min="0" max="74" />
+	</fuzzy-output>	
+
+	<metrics>
+		<metric id="mock" class-name="edu.umd.msswe.ece591.diagnose.metrics.MockMetric" > 
+			<name>Mock Metric</name>
+			<definition>This is a Mock Metric</definition>
+			<solution>There is NOT solution for this metric</solution>
+		</metric>
+	</metrics>
+
+	<fuzzy-set-type>
+		<fuzzy-set class-name="edu.umd.msswe.ece591.diagnose.fuzzyrules.FuzzySetAscendent" type="ascendent-set"/>
+		<fuzzy-set class-name="edu.umd.msswe.ece591.diagnose.fuzzyrules.FuzzySetDescendent" type="descendent-set"/>
+		<fuzzy-set class-name="edu.umd.msswe.ece591.diagnose.fuzzyrules.FuzzySetTriangle" type="triangle-set"/>
+		<fuzzy-set class-name="edu.umd.msswe.ece591.diagnose.fuzzyrules.FuzzySetTrapezoide" type="trapezoide-set"/>
+	</fuzzy-set-type>
+
+	<fuzzy-sets>
+		<fuzzy-set id="med-mock" type="descendent-set" label="medium" value="5,6" max="10" />
+		<fuzzy-set id="high-mock" type="ascendent-set" label="medium" value="50,60" max="100" />
+		<fuzzy-set id="result-mock" type="ascendent-set" label="medium" value="8,9" max="10" />
+	</fuzzy-sets>
+	
+	<fuzzy-rules-app>
+		<fuzzy-rule id="ruleclass1" >
+		    <if> <condition metric-id="mock" operation="is" fuzzy-set-id="high-mock"/></if>
+			<then fuzzy-set-id="result-mock" />
+		</fuzzy-rule>
+		<fuzzy-rule id="ruleclass2" >
+		    <if><and>
+				    <condition metric-id="mock" operation="is" fuzzy-set-id="med-mock"/>
+				    <condition metric-id="mock" operation="is" fuzzy-set-id="med-mock"/>
+				    <or><condition metric-id="mock" operation="is" fuzzy-set-id="high-mock"/>
+				    	<condition metric-id="mock" operation="is" fuzzy-set-id="med-mock"/>
+				    </or>
+			    </and>
+		    </if>
+			<then fuzzy-set-id="result-mock" />
+		</fuzzy-rule>
+	</fuzzy-rules-app>
+	<fuzzy-rules-class>
+		<fuzzy-rule id="ruleclass1" >
+		    <if> <condition metric-id="mock" operation="is" fuzzy-set-id="high-mock"/></if>
+			<then fuzzy-set-id="result-mock" />
+		</fuzzy-rule>
+		<fuzzy-rule id="ruleclass2" >
+		    <if><and>
+				    <condition metric-id="mock" operation="is" fuzzy-set-id="med-mock"/>
+				    <condition metric-id="mock" operation="is" fuzzy-set-id="med-mock"/>
+				    <or><condition metric-id="mock" operation="is" fuzzy-set-id="high-mock"/>
+				    	<condition metric-id="mock" operation="is" fuzzy-set-id="med-mock"/>
+				    </or>
+			    </and>
+		    </if>
+			<then fuzzy-set-id="result-mock" />
+		</fuzzy-rule>
+	</fuzzy-rules-class>
+	<test>
+		<fuzzy-rule id="ruleclass1" >
+		    <if>
+		    	<condition metric-id="mock" operation="is" fuzzy-set-id="high-mock"/>
+		    </if>
+			<then fuzzy-set-id="result-mock" />
+		</fuzzy-rule>
+
+		<fuzzy-rule id="ruleclass2" >
+		    <if> 
+			    <and>
+			    	<condition metric-id="mock" operation="is" fuzzy-set-id="high-mock"/>
+			    	<condition metric-id="mock" operation="is" fuzzy-set-id="med-mock"/>
+			    	<or>
+				    	<condition metric-id="mock" operation="is" fuzzy-set-id="med-mock"/>
+				    	<condition metric-id="mock" operation="is" fuzzy-set-id="high-mock"/>
+			    	</or>
+			    </and>
+		    </if>
+			<then fuzzy-set-id="result-mock" />
+		</fuzzy-rule>
+		<fuzzy-rule id="ruleclass3" >
+		    <if> 
+			    <or>
+			    	<condition metric-id="mock" operation="is" fuzzy-set-id="high-mock"/>
+			    	<condition metric-id="mock" operation="is" fuzzy-set-id="med-mock"/>
+			    	<and>
+				    	<condition metric-id="mock" operation="is" fuzzy-set-id="med-mock"/>
+				    	<condition metric-id="mock" operation="is" fuzzy-set-id="high-mock"/>
+			    	</and>
+			    </or>
+		    </if>
+			<then fuzzy-set-id="result-mock" />
+		</fuzzy-rule>
+</test>
+</oodiagnose>
